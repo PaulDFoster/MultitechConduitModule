@@ -1,0 +1,2 @@
+/opt/mlinux/3.3.6/sysroots/x86_64-mlinux-linux/usr/bin/arm-mlinux-linux-gnueabi/arm-mlinux-linux-gnueabi-ar qc libparson.a  CMakeFiles/parson.dir/__/__/deps/parson/parson.c.o
+/opt/mlinux/3.3.6/sysroots/x86_64-mlinux-linux/usr/bin/arm-mlinux-linux-gnueabi/arm-mlinux-linux-gnueabi-ranlib libparson.a

@@ -1,0 +1,63 @@
+{
+  "modules": [
+    {
+      "name": "IotHub",
+      "loader": {
+        "name": "native",
+        "entrypoint": {
+          "module.path": "./modules/iothub/libiothub.so"
+        }
+      },
+      "args": {
+        "IoTHubName": "paulfointeliot",
+        "IoTHubSuffix": "azure-devices.net",
+        "Transport": "AMQP",
+        "RetryPolicy": "EXPONENTIAL_BACKOFF_WITH_JITTER"
+      }
+    },
+    {
+      "name": "conduit",
+      "loader": {
+        "name": "native",
+        "entrypoint": {
+          "module.path": "./modules/MultitechConduit/libmultitechconduit.so"
+        }
+      },
+      "args": {
+        "macAddress": "01:01:01:01:01:01",
+        "iothubProtocol": "MQTT",
+	"deviceId": "MultitechConduit",
+	"deviceKey": "MtQ35eklLZ+bcDarx6RVgqQSat/CO7Bq+Ht8l858cXI=",
+	"portHost": "127.0.0.1",
+	"port": 1883
+      }
+    },
+    {
+      "name": "Logger",
+      "loader": {
+	"name": "native",
+	"entrypoint": {
+		"module.path": "./modules/logger/liblogger.so"
+	}
+       },
+	"args": {
+	 "filename":
+	 "gatewaylog.log"
+	}
+    }
+  ],
+  "links": [
+    {
+      "source": "*",
+      "sink": "Logger"
+    },
+    {
+      "source": "conduit",
+      "sink": "IotHub"
+    },
+    {
+      "source": "IotHub",
+      "sink": "conduit"
+    }
+  ]
+}
