@@ -13,7 +13,7 @@ The conduit_test_udp.json file is configured to use the UDP endpoint from the Lo
 
 Copy the contents of the bin directory to the Multitech Conduit. This can be easily achieved by directly copying to a MicroSD card to be placed in the Conduit or by using the SCP command to network copy the files to the Conduit.
 
-<i>Hint: its easier to copy everything via the microSD card first, and only use SCP to upload subsequent individual file changes.
+<i>Hint: its easier to copy everything via the microSD card first, and only use SCP to upload subsequent individual file changes.</i>
 
 Run the IoT Edge solution by executing the iotedge_device_cloud_upload_sample with a parameter specifying the name of the JSON configuration file you want to use.
 
