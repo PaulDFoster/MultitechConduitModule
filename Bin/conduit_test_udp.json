@@ -5,11 +5,11 @@
       "loader": {
         "name": "native",
         "entrypoint": {
-          "module.path": "./modules/iothub/libiothub.so"
+          "module.path": "./iothub/libiothub.so"
         }
       },
       "args": {
-        "IoTHubName": "paulfointeliot",
+        "IoTHubName": "<enter your IoT Hub name here",
         "IoTHubSuffix": "azure-devices.net",
         "Transport": "AMQP",
         "RetryPolicy": "EXPONENTIAL_BACKOFF_WITH_JITTER"
@@ -20,14 +20,14 @@
       "loader": {
         "name": "native",
         "entrypoint": {
-          "module.path": "./modules/MultitechConduit/libmultitechconduit.so"
+          "module.path": "./MultitechConduit/libmultitechconduit.so"
         }
       },
       "args": {
         "macAddress": "01:01:01:01:01:01",
         "iothubProtocol": "UDP",
-	"deviceId": "MultitechConduit",
-	"deviceKey": "MtQ35eklLZ+bcDarx6RVgqQSat/CO7Bq+Ht8l858cXI=",
+	"deviceId": "<enter your device name from IoT Hub here>",
+	"deviceKey": "<enter your device key from IoT Hub here>",
 	"portHost": "127.0.0.1",
 	"port": 1784
       }
@@ -37,7 +37,7 @@
       "loader": {
 	"name": "native",
 	"entrypoint": {
-		"module.path": "./modules/logger/liblogger.so"
+		"module.path": "./logger/liblogger.so"
 	}
        },
 	"args": {
