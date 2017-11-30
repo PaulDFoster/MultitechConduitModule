@@ -8,6 +8,7 @@
 #include "azure_c_shared_utility/threadapi.h"
 #include "azure_c_shared_utility/xlogging.h"
 #include "azure_c_shared_utility/crt_abstractions.h"
+#include "base64Decode.h"
 
 typedef struct MULTITECHCONDUIT_DATA_TAG
 {

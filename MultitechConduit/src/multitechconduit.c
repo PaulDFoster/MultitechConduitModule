@@ -69,7 +69,26 @@ void PublishNewMessageToBroker(const char * payload)
                 else
                 {
 
-                    const char* dataPayload = json_object_get_string(root, "data");
+                    const char* dataPayload = json_object_get_string(root, "data"); // base64
+
+                    //char b64src[] = dataPayload;
+                    char clrdst[250] = ""; //base64 decoded payload data. 250 > 242 maximum LoRaWAN payload size
+
+                    // pad dataPayload less then 4 characters with = for the b64 decode
+                    if(strlen(dataPayload)<4)
+                    {
+
+                        int x = 4 - strlen(dataPayload);
+                        for(int i = 0; i<x;i++)
+                        {
+                            strncat(dataPayload,"=", sizeof("="));
+                        }
+
+                    }
+
+                    b64_decode(dataPayload, clrdst);
+                    strncat(clrdst, "\0", sizeof("\0"));
+
                     const char* appeui = json_object_get_string(root, "appeui");
                     const char* deveui = json_object_get_string(root, "deveui");
                     const char* timestamp = json_object_get_string(root, "timestamp");
@@ -77,11 +96,14 @@ void PublishNewMessageToBroker(const char * payload)
                     char msgText[180]; 
                     
                     (void)sprintf_s(msgText, sizeof(msgText), "{\"data\": \"%s\",\"appeui\": \"%s\",\"deveui\": \"%s\", \"gtyts\": \"%s\"}",
-                        dataPayload,
+                        //dataPayload,
+                        clrdst,
                         appeui, 
                         deveui, 
                         timestamp
                     );
+
+                    LogError(msgText);
 
                     newMessageCfg.sourceProperties = newProperties;
 
@@ -102,8 +124,8 @@ void PublishNewMessageToBroker(const char * payload)
                         }
 
                         count++;
-                        (void)printf("Count %d\n\r",count);
-                        (void)fflush(stdout);
+                        //(void)printf("Count %d\n\r",count);
+                        //(void)fflush(stdout);
 
                         Message_Destroy(newMessage);
 
