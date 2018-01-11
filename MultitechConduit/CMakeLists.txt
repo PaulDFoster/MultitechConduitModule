@@ -5,12 +5,15 @@ cmake_minimum_required(VERSION 2.8.12)
 
 set(multitechconduit_sources
     ./src/multitechconduit.c
+    ./src/base64Decode.c
+    ./src/serialoutput.c
 )
 
 set(multitechconduit_headers
     ./inc/mosquitto.h
     ./inc/multitechconduit_protocol.h
     ./inc/multitechconduit.h
+    ./inc/base64Decode.h
 )
 
 include_directories(./inc)

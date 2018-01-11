@@ -299,16 +299,18 @@ static int udp_worker(void * user_data)
 
 static void MultitechConduit_Receive(MODULE_HANDLE moduleHandle, MESSAGE_HANDLE messageHandle)
 {
+    printf("Message Received\n");
+    
     // Print the properties & content of the received message
     CONSTMAP_HANDLE properties = Message_GetProperties(messageHandle);
     if (properties != NULL)
     {
-        const char* addr = ((MULTITECHCONDUIT_DATA*)moduleHandle)->fakeMacAddress;
+        const char* addr = ((MULTITECHCONDUIT_DATA*)moduleHandle)->deviceId;
 
         // We're only interested in cloud-to-device (C2D) messages addressed to
         // this device
-        if (ConstMap_ContainsKey(properties, GW_MAC_ADDRESS_PROPERTY) == true &&
-            strcmp(addr, ConstMap_GetValue(properties, GW_MAC_ADDRESS_PROPERTY)) == 0)
+        if (ConstMap_ContainsKey(properties, GW_DEVICENAME_PROPERTY) == true &&
+            strcmp(addr, ConstMap_GetValue(properties, GW_DEVICENAME_PROPERTY)) == 0)
         {
             const char* const * keys;
             const char* const * values;
@@ -327,6 +329,33 @@ static void MultitechConduit_Receive(MODULE_HANDLE moduleHandle, MESSAGE_HANDLE 
                     for (size_t i = 0; i < count; ++i)
                     {
                         (void)printf("  %s = %s\r\n", keys[i], values[i]);
+
+                        if(strcmp(keys[i],"METHODNAME")==0)
+                        {
+                            // Route method call from here
+                            if(strcmp(values[i],"SetLED")==0)
+                            {
+                                // OpenSerialPort
+                                int portHandle = openSerialPort();
+                                if(portHandle<0)
+                                {
+                                    LogError("Failed to open serial port");
+                                }
+                                else
+                                {
+                                    // Write out message payload
+                                    int res = serialoutput(portHandle, content->buffer, (int)content->size );
+                                    // Close Serial port
+                                    closeSerialPort(portHandle);
+                                    (void)printf("Method command written to serial port\r\n");
+                                }
+                            }
+                            else
+                            {
+                                (void)printf("Method command not known: %s\r\n",values[i]);
+                            }
+                        }
+
                     }
 
                     (void)printf("Content:\r\n");
