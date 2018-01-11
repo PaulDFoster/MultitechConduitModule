@@ -53,3 +53,12 @@ http://www.multitech.net/developer/software/lora/getting-started-with-lora-condu
 Ensure the sensor node whitelist is correctly setup via the lora-query -a commmand.
 
 Each sensor node needs to be specified unless the named network and passphase security options have been used and published to every connecting device.
+
+<b>IoT Hub module modification</b>
+
+An extended IoT Hub module has been added to this repository to provide support for Direct Methods and Device TWIN. 
+
+Direct Methods are implemented by setting up the callbacks required in the IoT Hub module. On receipt of a Direct Method callback the module creates a new broker message addressed to the Multitech Conduit module with a METHODNAME property containing the method called. The Multitech Conduit Module receives the message and determines which subroutine it will execute, retrieving the method call parameters from the payload of the broker message.
+IoT Hub module sends a success response to Azure IoT Hub as soon as it has created the broker message and submitted it. 
+
+Device TWIN. The Device TWIN callbacks have been registered as demonstrated by the IoT Hub C Client SDK sample for device TWIN support. However, this does not work correctly at thie time. Notification of device TWIN state is received by the module callbacks, but the reporting of device state back to IoT Hub fails. The product team have determined a bug and are investigating.
