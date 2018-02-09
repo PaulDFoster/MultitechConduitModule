@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include <stdlib.h>
-
+#include <string.h>
 
 #include "multitechconduit.h"
 #include "azure_c_shared_utility/threadapi.h"
@@ -53,7 +53,52 @@ void PublishNewMessageToBroker(const char * payload)
         }
         else
         {
-            JSON_Value* json = json_parse_string(payload);
+            LogError(payload);
+            // Multitech Conduit firmware 1.4.11 produces duplicate keys in JSON (appeui). 
+            // Preprocess JSON to remove
+            // Note same firmware doesn't provide a timestamp element
+            //const char * test = "{\"tmst\": 3868658964,\"chan\": 1,\"rfch\": 0,\"freq\": 868.3,\"stat\": 1,\"modu\": \"LORA\",\"datr\": \"SF9BW125\",\"codr\": \"4/5\",\"lsnr\": 1.0,\"rssi\": -101,\"opts\": \"\",\"size\": 1,\"fcnt\": 102,\"cls\": 0,\"port\": 8,\"mhdr\": \"409f375c00806600\",\"data\": \"YQ==\",\"appeui\": \"48-83-c7-df-30-01-00-00\",\"deveui\": \"48-83-c7-df-30-01-1a-26\",\"ack\": false,\"adr\": true,\"gweui\": \"00-80-00-00-a0-00-1c-0e\",\"seqn\": 102,\"appeui\": \"48-83-c7-df-30-01-00-00\"}";
+
+            // Preprocess JSON to remove duplicate keys
+
+            char * strs[30]; // 30 JSON fields only....
+            char * deduped;
+            int jsonlen = strlen(payload) + 1;
+            deduped = (char*)malloc(jsonlen * sizeof(char));
+            strcpy(deduped, "{");
+
+            char * pch;
+
+            // In POSIX compliant systems this should be _strdup
+            char * rwTest = (char*)strdup(payload);
+
+            pch = strtok(rwTest, "{,}");
+            int i = 0;
+            bool flag = false;
+            while (pch != NULL)
+            {
+                //printf("%s\n", pch);
+                flag = false;
+                for (int k = 0; k < i; k++)
+                {
+                    if (strcmp(pch, strs[k]) == 0)
+                        flag = true;
+                }
+                if (!flag)
+                {
+                    if (i > 0) strcat(deduped, ",");
+                    strs[i] = (char*)malloc(strlen(pch) + 1);
+                    strcpy(strs[i], pch);
+                    strcat(deduped, pch);
+                    i++;
+                }
+                pch = strtok(NULL, ",}");
+            }
+            strcat(deduped, "}\0");
+
+            // Preprocessing complete
+
+            JSON_Value* json = json_parse_string(deduped);
 
             if (json == NULL)
             {
@@ -74,20 +119,7 @@ void PublishNewMessageToBroker(const char * payload)
                     //char b64src[] = dataPayload;
                     char clrdst[250] = ""; //base64 decoded payload data. 250 > 242 maximum LoRaWAN payload size
 
-                    // pad dataPayload less then 4 characters with = for the b64 decode
-                    if(strlen(dataPayload)<4)
-                    {
-
-                        int x = 4 - strlen(dataPayload);
-                        for(int i = 0; i<x;i++)
-                        {
-                            strncat(dataPayload,"=", sizeof("="));
-                        }
-
-                    }
-
                     b64_decode(dataPayload, clrdst);
-                    strncat(clrdst, "\0", sizeof("\0"));
 
                     const char* appeui = json_object_get_string(root, "appeui");
                     const char* deveui = json_object_get_string(root, "deveui");
@@ -131,8 +163,10 @@ void PublishNewMessageToBroker(const char * payload)
 
                     }
                 }
-                
             }
+                        
+            free(rwTest);
+            free(deduped);
         }
 
         Map_Destroy(newProperties);

@@ -38,4 +38,5 @@ void b64_decode(char *b64src, char *clrdst) {
     }
     i++;
   }
+  clrdst[i-1] = '\0';
 }

@@ -54,6 +54,12 @@ Ensure the sensor node whitelist is correctly setup via the lora-query -a commma
 
 Each sensor node needs to be specified unless the named network and passphase security options have been used and published to every connecting device.
 
+<b>Multitech Conduit Firmware 1.4.11 issue</b>
+
+The Multitech Conduit firmware 1.4.11 produces invalid JSON on the stream end points, with duplicate keys. A JSON pre-processor has been implemented to strip duplicate keys from the JSON. First key wins.
+
+The firmware is also not producing a timestamp element. Therefore, gateway timestamp element output is null.
+
 <b>IoT Hub module modification</b>
 
 An extended IoT Hub module has been added to this repository to provide support for Direct Methods and Device TWIN. 
