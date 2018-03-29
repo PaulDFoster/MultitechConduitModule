@@ -53,7 +53,8 @@ void PublishNewMessageToBroker(const char * payload)
         }
         else
         {
-            LogError(payload);
+            (void)printf("Message:%s\n",payload);
+            (void)fflush(stdout);
             // Multitech Conduit firmware 1.4.11 produces duplicate keys in JSON (appeui). 
             // Preprocess JSON to remove
             // Note same firmware doesn't provide a timestamp element
@@ -123,7 +124,7 @@ void PublishNewMessageToBroker(const char * payload)
 
                     const char* appeui = json_object_get_string(root, "appeui");
                     const char* deveui = json_object_get_string(root, "deveui");
-                    const char* timestamp = json_object_get_string(root, "timestamp");
+                    const char* timestamp = json_object_get_string(root, "time"); // "timestamp"); Multitech 1.4.14 change
 
                     char msgText[180]; 
                     
@@ -135,8 +136,9 @@ void PublishNewMessageToBroker(const char * payload)
                         timestamp
                     );
 
-                    LogError(msgText);
-
+                    (void)printf("Payload Up: %s\n",msgText);
+                    (void)fflush(stdout);
+                    
                     newMessageCfg.sourceProperties = newProperties;
 
                     newMessageCfg.size = strlen(msgText);
@@ -188,6 +190,7 @@ void mqtt_connect_callback(struct mosquitto *mosq, void *userdata, int result)
 		mosquitto_subscribe(mosq, NULL, "lora/+/up", 2); // $SYS/# is topic specifier. "lora/+/up" is Conduit lorawan message topic
 	}else{
 		fprintf(stderr, "Connect failed\n");
+        (void)fflush(stdout);
 	}
 }
 
@@ -198,14 +201,17 @@ void mqtt_subscribe_callback(struct mosquitto *mosq, void *userdata, int mid, in
 	printf("Subscribed (mid: %d): %d", mid, granted_qos[0]);
 	for(i=1; i<qos_count; i++){
 		printf(", %d", granted_qos[i]);
+        (void)fflush(stdout);
 	}
 	printf("\n");
+    (void)fflush(stdout);
 }
 
 void mqtt_log_callback(struct mosquitto *mosq, void *userdata, int level, const char *str)
 {
 	/* Pring all log messages regardless of level. */
 	printf("%s\n", str);
+    (void)fflush(stdout);
 }
 
 static int mqtt_worker(void * user_data)
@@ -226,6 +232,7 @@ static int mqtt_worker(void * user_data)
 	mosq = mosquitto_new(NULL, clean_session, NULL);
 	if(!mosq){
 		fprintf(stderr, "Error: Out of memory.\n");
+        (void)fflush(stdout);
 		return 1;
 	}
 	mosquitto_log_callback_set(mosq, mqtt_log_callback);
@@ -235,6 +242,7 @@ static int mqtt_worker(void * user_data)
 
 	if(mosquitto_connect(mosq, host, port, keepalive)){
 		fprintf(stderr, "Unable to connect.\n");
+        (void)fflush(stdout);
 		return 1;
 	}
 
@@ -334,6 +342,7 @@ static int udp_worker(void * user_data)
 static void MultitechConduit_Receive(MODULE_HANDLE moduleHandle, MESSAGE_HANDLE messageHandle)
 {
     printf("Message Received\n");
+    (void)fflush(stdout);
     
     // Print the properties & content of the received message
     CONSTMAP_HANDLE properties = Message_GetProperties(messageHandle);
@@ -359,6 +368,7 @@ static void MultitechConduit_Receive(MODULE_HANDLE moduleHandle, MESSAGE_HANDLE 
                         "Received a message\r\n"
                         "Properties:\r\n"
                         );
+                    (void)fflush(stdout);
 
                     for (size_t i = 0; i < count; ++i)
                     {

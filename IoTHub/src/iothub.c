@@ -393,6 +393,7 @@ void deviceTwinReportStateCallback(int status_code, void* userContextCallback)
 {
     (void)(userContextCallback);
     printf("IoTHub: reported properties delivered with status_code = %d\n", status_code);
+    (void)fflush(stdout);
 }
 
 static void deviceTwinGetStateCallback(DEVICE_TWIN_UPDATE_STATE update_state, const unsigned char* payLoad, size_t size, void* userContextCallback)
@@ -400,7 +401,7 @@ static void deviceTwinGetStateCallback(DEVICE_TWIN_UPDATE_STATE update_state, co
     //(void)userContextCallback;
     PERSONALITY_PTR personality = (PERSONALITY_PTR)userContextCallback;
     printf("Device Twin properties received: update=%s payload=%s, size=%zu\n", ENUM_TO_STRING(DEVICE_TWIN_UPDATE_STATE, update_state), payLoad, size);
-
+    (void)fflush(stdout);
 }
 
 static int IotHub_ReceiveDirectMethodCallback(const char* method_name, const unsigned char* payload, size_t size, unsigned char** response, size_t* resp_size, void* userContextCallback)
@@ -408,6 +409,7 @@ static int IotHub_ReceiveDirectMethodCallback(const char* method_name, const uns
     int result;
 
     printf("DirectMethod: method=%s,payload=%s,size=%zu\n", method_name,payload, size);
+    (void)fflush(stdout);
 
     result = IOTHUB_CLIENT_OK;
     char* RESPONSE_STRING = "{ \"Response\": \"Direct Method Task Queued On Device\" }";
@@ -423,7 +425,7 @@ static int IotHub_ReceiveDirectMethodCallback(const char* method_name, const uns
 
     PERSONALITY_PTR personality = (PERSONALITY_PTR)userContextCallback;
     printf("device name: %s\n", STRING_c_str(personality->deviceName));
-
+    (void)fflush(stdout);
     /* Handle message content */
     MESSAGE_CONFIG newMessageConfig;
     /* Load payload as message body */
