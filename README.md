@@ -15,7 +15,7 @@ Copy the contents of the bin directory to the Multitech Conduit. This can be eas
 
 <i>Hint: its easier to copy everything via the microSD card first, and only use SCP to upload subsequent individual file changes.</i>
 
-Run the IoT Edge solution by executing the iotedge_device_cloud_upload_sample with a parameter specifying the name of the JSON configuration file you want to use.
+Run the IoT Edge solution by executing the iotedge_device_cloud_upload_sample sample from the IoT Edge V1 SDK, or use the bridge executable in the bin directory, with a parameter specifying the name of the JSON configuration file you want to use.
 
 This will start the solution as a console application where logged information will be displayed.
 The solution is stopped by pressing a key or crtl-c.
