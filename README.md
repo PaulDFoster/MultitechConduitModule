@@ -17,7 +17,8 @@ Copy the contents of the bin directory to the Multitech Conduit. This can be eas
 
 Run the IoT Edge solution by executing the iotedge_device_cloud_upload_sample sample from the IoT Edge V1 SDK, or use the bridge executable in the bin directory, with a parameter specifying the name of the JSON configuration file you want to use.
 
-This will start the solution as a console application where logged information will be displayed.
+This will start the solution as a console application where logged information will be displayed. A modified simulated_device_cloud_upload code drop is now included in this repo. It removes the 'wait for user input' to stop the application, and thereby allows the application to be run as a background process with the addition of an & suffix on the command line. The code provided is a very simple solution and not intended for production.
+
 The solution is stopped by pressing a key or crtl-c.
 
 <b>Adding the module to the IoT Edge SDK V1 build script</b>
